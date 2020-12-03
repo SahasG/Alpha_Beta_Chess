@@ -6,7 +6,7 @@ WIDTH = HEIGHT = 512
 DIM = 8
 SQ = HEIGHT // DIM
 IMAGES = {}
-FPS = 30
+Frames = 30
 
 def loadImages():
     image_pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
@@ -36,15 +36,43 @@ def main():
     clock = game.time.Clock()
     screen.fill(game.Color("white"))
     state = Chess_State.Game()
+    validSuccessors = state.getSuccessors()
+    moveMade = False
     loadImages()
-    print(state.board)
+    clickLogs = []
+    lastSQClick = ()
     running = True
     while running == True:
         for event in game.event.get():
-            if event.type == game.QUIT:
-                running = False
+            if (event.type == game.KEYDOWN):
+                if(event.key == game.K_ESCAPE):
+                    running = False
+            elif(event.type == game.MOUSEBUTTONDOWN):
+                cords = game.mouse.get_pos()
+                col = cords[0]//SQ
+                row = cords[1]//SQ
+                if(lastSQClick == (row, col)):
+                    lastSQClick = ()
+                    clickLogs = []
+                else:
+                    lastSQClick = (row, col)
+                    clickLogs.append(lastSQClick)
+                if(len(clickLogs) == 2):
+                    move = Chess_State.Move(clickLogs[0], clickLogs[1], state.board)
+                    if move in validSuccessors:
+                        state.move(move)
+                        moveMade = True
+                    clickLogs = []
+                    lastSQClick = ()
+            elif(event.type == game.KEYDOWN):
+                if(event.key == game.K_u):
+                    state.undo()
+                    moveMade = True
+        if moveMade:
+            validSuccessors = state.getSuccessors()
+            moveMade = False
         draw(screen, state)
-        clock.tick(FPS)
+        clock.tick(Frames)
         game.display.flip()
 
 if __name__ == "__main__":
