@@ -47,6 +47,8 @@ def main():
             if (event.type == game.KEYDOWN):
                 if(event.key == game.K_ESCAPE):
                     running = False
+            elif(event.type == game.QUIT):
+                running = False
             elif(event.type == game.MOUSEBUTTONDOWN):
                 cords = game.mouse.get_pos()
                 col = cords[0]//SQ
@@ -69,7 +71,7 @@ def main():
                     state.undo()
                     moveMade = True
         if moveMade:
-            validSuccessors = state.getSuccessors()
+            validSuccessors = state.getValidSuccessors()
             moveMade = False
         draw(screen, state)
         clock.tick(Frames)
