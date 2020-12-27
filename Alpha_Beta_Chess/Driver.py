@@ -44,10 +44,7 @@ def main():
     running = True
     while running == True:
         for event in game.event.get():
-            if (event.type == game.KEYDOWN):
-                if(event.key == game.K_ESCAPE):
-                    running = False
-            elif(event.type == game.QUIT):
+            if(event.type == game.QUIT):
                 running = False
             elif(event.type == game.MOUSEBUTTONDOWN):
                 cords = game.mouse.get_pos()
@@ -61,11 +58,44 @@ def main():
                     clickLogs.append(lastSQClick)
                 if(len(clickLogs) == 2):
                     move = Chess_State.Move(clickLogs[0], clickLogs[1], state.board)
-                    if move in validSuccessors:
-                        state.move(move)
-                        moveMade = True
-                    clickLogs = []
-                    lastSQClick = ()
+                    for i in range(len(validSuccessors)):
+                        if (move == validSuccessors[i]):
+                            if(validSuccessors[i].getPawnPromotion() == True):
+                                looking = True
+                                while looking == True:
+                                    for event in game.event.get():
+                                        if(event.type == game.KEYDOWN):
+                                            if(event.key == game.K_q):
+                                                state.move(validSuccessors[i], 'Q')
+                                                moveMade = True
+                                                clickLogs = []
+                                                lastSQClick = ()
+                                                looking = False
+                                            elif(event.key == game.K_n):
+                                                state.move(validSuccessors[i], 'N')
+                                                moveMade = True
+                                                clickLogs = []
+                                                lastSQClick = ()
+                                                looking = False
+                                            elif(event.key == game.K_r):
+                                                state.move(validSuccessors[i], 'R')
+                                                moveMade = True
+                                                clickLogs = []
+                                                lastSQClick = ()
+                                                looking = False
+                                            elif(event.key == game.K_b):
+                                                state.move(validSuccessors[i], 'B')
+                                                moveMade = True
+                                                clickLogs = []
+                                                lastSQClick = ()
+                                                looking = False
+                            else:
+                                state.move(validSuccessors[i])
+                                moveMade = True
+                                clickLogs = []
+                                lastSQClick = ()
+                    if moveMade == False:
+                        clickLogs = [lastSQClick]
             elif(event.type == game.KEYDOWN):
                 if(event.key == game.K_u):
                     state.undo()
